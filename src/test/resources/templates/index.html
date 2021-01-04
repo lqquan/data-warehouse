@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="shortcut icon" href="#" />
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <link rel="stylesheet" href="../kindeditor/themes/default/default.css" />
+    <script type="text/javascript" src="../kindeditor/kindeditor-all-min.js"></script>
+    <script type="text/javascript" src="../kindeditor/lang/zh-CN.js"></script>
+
+</head>
+<body>
+<div id="demo1">
+    <h2>这是首页测试</h2>
+    <h3 id="demo2"></h3>
+    <audio id="audio">
+        <!--<source src="http://fs.w.kugou.com/201810072005/027701698f293e893c62a1d88e1d539f/G130/M05/12/00/YpQEAFrxTvOAQ8I-ADrUXaC6U88058.mp3" type="audio/mpeg">-->
+        <source src="http://data.huiyi8.com/yinxiao/mp3/83121.mp3" type="audio/mpeg">
+    </audio>
+    <label for="mul_input"></label><textarea id="mul_input" name="content" style="width:700px;height:200px;visibility:hidden;display: block;">KindEditor</textarea>
+
+    <script>
+        //简单模式初始化
+        var editor;
+        KindEditor.ready(function(K) {
+            editor = K.create('textarea[name="content"]', {
+                resizeType : 1,
+                allowPreviewEmoticons : false,
+                allowImageUpload : false,
+                items : [
+                    'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+                    'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+                    'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+            });
+        });
+    </script>
+
+</div>
+
+<script>
+    //音频控制
+    var aud = document.getElementById("audio");
+
+    var socket;
+    if(typeof(WebSocket) === "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+    }else{
+        console.log("您的浏览器支持WebSocket");
+        //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+        //等同于
+        socket = new WebSocket("ws://localhost:8080/websocket/22");
+        // socket = new WebSocket("${basePath}websocket/22".replace("http","ws"));
+        //打开事件
+        socket.onopen = function() {
+            console.log("Socket 已打开");
+            //socket.send("这是来自客户端的消息" + location.href + new Date());
+        };
+        //获得消息事件
+        socket.onmessage = function(msg) {
+            aud.play();
+            console.log(msg.data);
+            // document.getElementById("demo2").innerText = msg.data;
+            var demo = document.getElementById("demo1");
+            var h2 = document.createElement("h2");
+            h2.innerHTML = msg.data;
+            demo.appendChild(h2);
+            //发现消息进入    开始处理前端触发逻辑
+
+        };
+        //关闭事件
+        socket.onclose = function() {
+            console.log("Socket已关闭");
+        };
+        //发生了错误事件
+        socket.onerror = function() {
+            alert("Socket发生了错误");
+            //此时可以尝试刷新页面
+        }
+        //离开页面时，关闭socket
+        //jquery1.8中已经被废弃，3.0中已经移除
+        // $(window).unload(function(){
+        //     socket.close();
+        //});
+    }
+</script>
+</body>
+</html>

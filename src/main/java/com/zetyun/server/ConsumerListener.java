@@ -16,11 +16,11 @@ import java.io.IOException;
 public class ConsumerListener {
     @Autowired
     private WebSocketServer socket;
-    @KafkaListener(topics = "pv-out")
+    @KafkaListener(topics = "${topicName}")
     public void onMessage(String message) throws IOException, InterruptedException {
         //insertIntoDb(buffer);//这里为插入数据库代码
         socket.sendMessage(message);
-         Thread.sleep(10);
+         Thread.sleep(1/2);
          }
 
 }

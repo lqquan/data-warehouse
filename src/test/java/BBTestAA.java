@@ -36,8 +36,8 @@ public class BBTestAA {
         try{
             long ct = System.currentTimeMillis();
             producer = new KafkaProducer(properties);
-            for(int i=0;i<1000000000;i++){
-                ProducerRecord<String,String> message = new ProducerRecord<String, String>("pv-out-2",i+"");
+            for(int i=0;i<500000000;i++){
+                ProducerRecord<String,String> message = new ProducerRecord<String, String>("pv-out-3",i+"");
                 producer.send(message);
 
                if(i%1000000==0){

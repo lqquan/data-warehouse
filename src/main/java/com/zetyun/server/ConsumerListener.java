@@ -17,10 +17,15 @@ public class ConsumerListener {
     @Autowired
     private WebSocketServer socket;
     @KafkaListener(topics = "${topicName}")
-    public void onMessage(String message) throws IOException, InterruptedException {
+    public void onMessage(String message) throws IOException {
         //insertIntoDb(buffer);//这里为插入数据库代码
         socket.sendMessage(message);
-         Thread.sleep(1/2);
-         }
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            System.out.println("Thread.sleep(1);");
+            e.printStackTrace();
+        }
+    }
 
 }

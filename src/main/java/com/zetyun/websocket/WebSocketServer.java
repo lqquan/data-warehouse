@@ -22,6 +22,7 @@ public class WebSocketServer {
     /*websocket 连接建立成功后进行调用*/
     @OnOpen
     public void onOpen(Session session) {
+        session.setMaxIdleTimeout(3600000);
         this.session = session;
         webSocketSet.add(this);
         System.out.println("websocket 有新的链接"+webSocketSet.size());
@@ -40,13 +41,19 @@ public class WebSocketServer {
     }
     /* WebSocket 发生错误时进行调用*/
     @OnError
-    public void onError(Session session,Throwable error){
+    public void onError(Session session,Throwable error) throws IOException {
+        System.out.println("WebSocket 发生错误");
+        if (session.isOpen()) {
+            session.close();
+        }
+        webSocketSet.remove(session);
         error.printStackTrace();
     }
     public void sendMessage(String message) throws IOException {
-
         for (WebSocketServer socket : webSocketSet) {
-            socket.session.getBasicRemote().sendText(message);
+            if(socket.session.isOpen()){
+                socket.session.getBasicRemote().sendText(message);
+            }
         }
     }
     public Session getSession() {
